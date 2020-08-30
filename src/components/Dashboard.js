@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import '../App.css'
-import {Container, Row, Col, Card, CardBody, CardTitle, CardSubtitle} from 'reactstrap'
+import {Container, Row, Col, Card, CardBody} from 'reactstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGlobe, faBullseye, faHourglassEnd} from '@fortawesome/free-solid-svg-icons'
 import NumberFormat from 'react-number-format'
@@ -16,6 +16,7 @@ const Dashboard = (props) => {
     } = props;
 
     return(
+
         <div className = "dashboard">
             <Container>
 

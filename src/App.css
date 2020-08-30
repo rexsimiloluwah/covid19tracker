@@ -121,3 +121,43 @@ html, body{
 .select{
   margin-top: 100px;
 }
+
+.news-header{
+  background: #4e73df;
+  color: #fff;
+
+}
+
+.news-button{
+  background: #4e73df;
+  opacity: 0.8;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.table-data{
+  background-color: #fff;
+}
+
+.table{
+  padding: 10px;
+}
+
+tbody tr td:nth-child(1){
+  background: #add8e6;
+}
+
+.footer{
+  background: #4e73df;
+}
+
+.footer-text{
+  color: #fff;
+  text-transform: uppercase
+
+}
+
+.table-full{
+  color: #4e73df;
+  text-transform: uppercase;
+}

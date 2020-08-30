@@ -1,12 +1,16 @@
-import React, {useState, useEffect,Component} from 'react';
+import React, {useState, useEffect} from 'react';
 import NavBar from './components/NavigationBar'
 import LineGraph from './components/LineGraph'
 import Dashboard from './components/Dashboard'
-import {Container, Col, Row, Card, CardHeader, CardTitle} from 'reactstrap'
+import {Container, Col, Row, Card, CardHeader, Table, Button} from 'reactstrap'
 import './App.css';
 import Select from 'react-select'
 import axios from './axios'
-
+import formatDate from './utilities/FormatDate'
+import NewsCard from './components/NewsCard'
+import Footer from './components/Footer'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 
 const App = () => {
@@ -41,8 +45,7 @@ const App = () => {
   const [totalConfirmed, setTotalConfirmed] = useState(0)
   const [totalRecovered, setTotalRecovered] = useState(0)
   const [totalDeaths, setTotalDeaths] = useState(0)
-  const [loadingStatus, setLoadingStatus] = useState(true)
-  const [covidData, setCovidData] = useState({})
+  const [covidData, setCovidData] = useState([])
   const [selectedCountry, setSelectedCountry] = useState('GLOBAL COVID19 REPORT')
   const [selectedDays, setSelectedDays] = useState(7)
   const [yAxis, setYAxis] = useState([])
@@ -51,15 +54,12 @@ const App = () => {
   useEffect( () => {
       axios.get('summary')
       .then( (result) => {
-
-          console.log(result)
-          setLoadingStatus(false)
           if (result){
             setTotalConfirmed(result.data.Global.TotalConfirmed)
             setTotalRecovered(result.data.Global.TotalRecovered)
             setTotalDeaths(result.data.Global.TotalDeaths)
             setCovidData(result.data)
-            // console.log(result.data)
+            
           }
           
       })
@@ -79,9 +79,9 @@ const App = () => {
     })
 
     // console.log(options[0])
-        
-  
   }
+
+    
 
   const getCoronaReportByDays = (country, from, to) => {
     axios.get(`country/${country}/status/confirmed?from=${from}T00:00:00Z&to=${to}T00:00:00Z`)
@@ -110,16 +110,6 @@ const App = () => {
     })
   }
 
-  // Formatting the date
-  const formatDate = (date) => {
-    const d = new Date(date)
-    const year = d.getFullYear()
-    const month = `0${d.getMonth()+1}`.slice(-2)
-    const day = d.getDate()
-
-    return `${year}-${month}-${day}`
-  }
-
   const selectDays = (e) => {
     setSelectedDays(e.value)
     const d = new Date()
@@ -142,7 +132,6 @@ const App = () => {
 
   }
 
-
   const SelectComponent = () => (
     <Select options={options} defaultValue="Worldwide" placeholder={selectedCountry}  onChange={selectCountry} className="mb-2" />
   )
@@ -151,7 +140,8 @@ const App = () => {
     <Select options = {dayOptions} defaultValue ={7}  placeholder = {selectedDays} onChange={selectDays} />
   )
 
-  if(loadingStatus === true){
+  if(!covidData.Countries){
+    // console.log(covidData)
     return(
       <React.Fragment>
       <NavBar />
@@ -161,12 +151,11 @@ const App = () => {
       </React.Fragment>
     )
   }
-
-
+ 
   return (
     
     <React.Fragment>
-
+          <NavBar />
       <div className = "select">
         <Container>
         <Row>
@@ -182,7 +171,6 @@ const App = () => {
         </Row>
         </Container>
       </div>
-      <NavBar />
 
       <Container fluid>
         <Row>
@@ -204,15 +192,52 @@ const App = () => {
       </Col>
 
       <Col md="4">
-        <h1>Table Space</h1>
+        
+        <div className = "news my-4 shadow">
+          <NewsCard />
+        </div>
+
+        <div className="table-data">
+        <Table className = "table" striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Country</th>
+                <th>Confirmed</th>
+                <th>Recovered</th>
+                <th>Deaths</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {
+                covidData.Countries.slice(0,20).map( (obj) => {
+                  return(
+                    <React.Fragment>
+                    <tr>
+                    <td>{obj.Country}</td>
+                    <td>{obj.TotalConfirmed}</td>
+                    <td>{obj.TotalRecovered}</td>
+                    <td>{obj.TotalDeaths}</td>
+                    </tr>
+                    </React.Fragment>
+                  )
+                })
+              }
+            </tbody>
+ 
+        </Table>
+            <Button className="news-button" block>See Full list <FontAwesomeIcon icon={faArrowRight} /> </Button>
+        </div>
       </Col>
       
       </Row>
       </Container>
-
+      
+      <Footer></Footer>
     </React.Fragment>
   );
 }
+
 
 
 export default App;
